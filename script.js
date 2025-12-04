@@ -151,13 +151,21 @@ document.addEventListener('DOMContentLoaded', () => {
     // }
 });
 
-// Add parallax effect to hero section
+// Add parallax effect to hero section with throttling
+let ticking = false;
+
 window.addEventListener('scroll', () => {
-    const scrolled = window.pageYOffset;
-    const hero = document.querySelector('.hero');
-    
-    if (hero) {
-        hero.style.transform = `translateY(${scrolled * 0.5}px)`;
+    if (!ticking) {
+        window.requestAnimationFrame(() => {
+            const scrolled = window.pageYOffset;
+            const hero = document.querySelector('.hero');
+            
+            if (hero) {
+                hero.style.transform = `translateY(${scrolled * 0.5}px)`;
+            }
+            ticking = false;
+        });
+        ticking = true;
     }
 });
 
@@ -193,7 +201,7 @@ function animateValue(element, start, end, duration) {
         if (!startTimestamp) startTimestamp = timestamp;
         const progress = Math.min((timestamp - startTimestamp) / duration, 1);
         const value = Math.floor(progress * (end - start) + start);
-        element.textContent = value + (end >= 50 ? '+' : '+');
+        element.textContent = value + '+';
         if (progress < 1) {
             window.requestAnimationFrame(step);
         }
